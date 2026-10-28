@@ -20,13 +20,13 @@
         <p class="text-sm text-slate-400">Memuat profil NFC...</p>
     </div>
 
-    <!-- Main Profile Card (Hidden by default until data loaded) -->
+    <!-- Main Profile Card -->
     <div id="profileContainer" class="hidden max-w-sm w-full glass-card glow rounded-3xl p-6 text-center relative overflow-hidden transition-all duration-500">
-        <!-- Background Ambient Glow -->
-        <div id="cardBgGlow" class="absolute -top-20 -left-20 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -top-20 -left-20 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        <!-- Avatar / Initials -->
-        <div class="relative w-24 h-24 mx-auto mb-4 rounded-2xl bg-gradient-to-tr from-slate-800 to-slate-700 border border-slate-600 flex items-center justify-center shadow-xl">
+        <!-- Avatar / Foto Profil Dinamis -->
+        <div class="relative w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden bg-gradient-to-tr from-slate-800 to-slate-700 border border-slate-600 flex items-center justify-center shadow-xl">
+            <img id="profileImage" src="" class="w-full h-full object-cover hidden">
             <span id="initials" class="text-3xl font-extrabold text-emerald-400">MR</span>
             <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-slate-900 flex items-center justify-center text-[10px]">⚡</div>
         </div>
@@ -39,7 +39,7 @@
         <!-- Bio Quote -->
         <p id="pBio" class="text-xs text-slate-300/90 mt-4 px-2 italic bg-slate-900/50 py-2.5 rounded-xl border border-slate-800">"..."</p>
 
-        <!-- Action Buttons (Interactive) -->
+        <!-- Action Buttons -->
         <div class="mt-6 space-y-2.5">
             <a id="btnWhatsapp" href="#" target="_blank" class="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20">
                 <i class="fa-brands fa-whatsapp text-sm"></i> Hubungi WhatsApp
@@ -52,7 +52,7 @@
             </a>
         </div>
 
-        <!-- Social Media Row (Hidden if empty) -->
+        <!-- Social Media Row -->
         <div id="socialContainer" class="hidden grid grid-cols-4 gap-2 mt-3">
             <a id="linkIg" href="#" target="_blank" class="hidden p-2.5 bg-slate-800/80 hover:bg-pink-600/20 hover:border-pink-500/50 border border-slate-700 rounded-xl text-slate-300 transition-all text-sm" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
             <a id="linkLi" href="#" target="_blank" class="hidden p-2.5 bg-slate-800/80 hover:bg-blue-600/20 hover:border-blue-500/50 border border-slate-700 rounded-xl text-slate-300 transition-all text-sm" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
@@ -60,12 +60,12 @@
             <a id="linkTw" href="#" target="_blank" class="hidden p-2.5 bg-slate-800/80 hover:bg-sky-600/20 hover:border-sky-500/50 border border-slate-700 rounded-xl text-slate-300 transition-all text-sm" title="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
         </div>
 
-        <!-- Save Contact (vCard Generator) -->
+        <!-- Save Contact (vCard) -->
         <button onclick="saveContact()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/20 cursor-pointer flex items-center justify-center gap-2">
             <i class="fa-solid fa-address-card"></i> Simpan Kontak ke HP (vCard)
         </button>
 
-        <p class="text-[10px] text-slate-500 mt-6 tracking-wider">POWERED BY SMART NFC TECHNOLOGY</p>
+        <p class="text-[10px] text-slate-500 mt-6 tracking-wider">POWERED BY MITRA RATING 2026</p>
     </div>
 
     <!-- Error State -->
@@ -112,8 +112,13 @@
             document.getElementById('pPerusahaan').textContent = data.perusahaan || "-";
             document.getElementById('pBio').textContent = `"${data.bio || 'Digital Business Card'}"`;
 
-            // Inisial avatar
-            if(data.nama) {
+            // Atur Foto atau Inisial
+            if (data.foto) {
+                const pImg = document.getElementById('profileImage');
+                pImg.src = data.foto;
+                pImg.classList.remove('hidden');
+                document.getElementById('initials').classList.add('hidden');
+            } else if (data.nama) {
                 const initials = data.nama.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                 document.getElementById('initials').textContent = initials;
             }
