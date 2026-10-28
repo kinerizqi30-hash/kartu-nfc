@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital NFC Business Card</title>
+    <title>Digital NFC Business Card - Profil</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background: #07090e; color: #f8fafc; font-family: 'Inter', sans-serif; }
         .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
@@ -41,19 +42,27 @@
         <!-- Action Buttons (Interactive) -->
         <div class="mt-6 space-y-2.5">
             <a id="btnWhatsapp" href="#" target="_blank" class="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20">
-                💬 Hubungi WhatsApp
+                <i class="fa-brands fa-whatsapp text-sm"></i> Hubungi WhatsApp
             </a>
             <a id="btnEmail" href="#" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold py-3 rounded-xl border border-slate-700 transition-all">
-                ✉️ Kirim Email
+                <i class="fa-solid fa-envelope"></i> Kirim Email
             </a>
             <a id="btnWebsite" href="#" target="_blank" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold py-3 rounded-xl border border-slate-700 transition-all">
-                🌐 Kunjungi Website
+                <i class="fa-solid fa-globe"></i> Kunjungi Website
             </a>
         </div>
 
+        <!-- Social Media Row (Hidden if empty) -->
+        <div id="socialContainer" class="hidden grid grid-cols-4 gap-2 mt-3">
+            <a id="linkIg" href="#" target="_blank" class="hidden p-2.5 bg-slate-800/80 hover:bg-pink-600/20 hover:border-pink-500/50 border border-slate-700 rounded-xl text-slate-300 transition-all text-sm" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a id="linkLi" href="#" target="_blank" class="hidden p-2.5 bg-slate-800/80 hover:bg-blue-600/20 hover:border-blue-500/50 border border-slate-700 rounded-xl text-slate-300 transition-all text-sm" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a id="linkTt" href="#" target="_blank" class="hidden p-2.5 bg-slate-800/80 hover:bg-slate-700 hover:border-slate-500 border border-slate-700 rounded-xl text-slate-300 transition-all text-sm" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+            <a id="linkTw" href="#" target="_blank" class="hidden p-2.5 bg-slate-800/80 hover:bg-sky-600/20 hover:border-sky-500/50 border border-slate-700 rounded-xl text-slate-300 transition-all text-sm" title="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+
         <!-- Save Contact (vCard Generator) -->
-        <button onclick="saveContact()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/20">
-            📇 Simpan Kontak ke HP (vCard)
+        <button onclick="saveContact()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/20 cursor-pointer flex items-center justify-center gap-2">
+            <i class="fa-solid fa-address-card"></i> Simpan Kontak ke HP (vCard)
         </button>
 
         <p class="text-[10px] text-slate-500 mt-6 tracking-wider">POWERED BY SMART NFC TECHNOLOGY</p>
@@ -67,7 +76,7 @@
     </div>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtPVF6-E9qbs29iCMko_kHrgiH03FWUrAEsQUaW0q3rPwLGG8YqPa016WoIvyKtJulRw/exec"; // Ganti dengan Web App URL Anda
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtPVF6-E9qbs29iCMko_kHrgiH03FWUrAEsQUaW0q3rPwLGG8YqPa016WoIvyKtJulRw/exec"; 
         let contactData = {};
 
         async function fetchCardData() {
@@ -98,19 +107,54 @@
             document.getElementById('loader').classList.add('hidden');
             document.getElementById('profileContainer').classList.remove('hidden');
 
-            document.getElementById('pNama').textContent = data.nama;
-            document.getElementById('pJabatan').textContent = data.jabatan;
-            document.getElementById('pPerusahaan').textContent = data.perusahaan;
+            document.getElementById('pNama').textContent = data.nama || "Tanpa Nama";
+            document.getElementById('pJabatan').textContent = data.jabatan || "-";
+            document.getElementById('pPerusahaan').textContent = data.perusahaan || "-";
             document.getElementById('pBio').textContent = `"${data.bio || 'Digital Business Card'}"`;
 
             // Inisial avatar
-            const initials = data.nama.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-            document.getElementById('initials').textContent = initials;
+            if(data.nama) {
+                const initials = data.nama.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('initials').textContent = initials;
+            }
 
-            // Tombol Link Aksi
+            // Tombol Link Aksi Utama
             document.getElementById('btnWhatsapp').href = `https://wa.me/${data.telepon}?text=Halo%20${encodeURIComponent(data.nama)},%20saya%20melihat%20kartu%20NFC%20Anda.`;
             document.getElementById('btnEmail').href = `mailto:${data.email}`;
-            document.getElementById('btnWebsite').href = data.website.startsWith('http') ? data.website : `https://${data.website}`;
+            document.getElementById('btnWebsite').href = data.website ? (data.website.startsWith('http') ? data.website : `https://${data.website}`) : '#';
+
+            // Sosial Media Rendering
+            let hasSocial = false;
+            const container = document.getElementById('socialContainer');
+
+            if(data.instagram) {
+                const ig = document.getElementById('linkIg');
+                ig.href = `https://instagram.com/${data.instagram.replace('@','')}`;
+                ig.classList.remove('hidden');
+                hasSocial = true;
+            }
+            if(data.linkedin) {
+                const li = document.getElementById('linkLi');
+                li.href = data.linkedin.startsWith('http') ? data.linkedin : `https://${data.linkedin}`;
+                li.classList.remove('hidden');
+                hasSocial = true;
+            }
+            if(data.tiktok) {
+                const tt = document.getElementById('linkTt');
+                tt.href = `https://tiktok.com/@${data.tiktok.replace('@','')}`;
+                tt.classList.remove('hidden');
+                hasSocial = true;
+            }
+            if(data.twitter) {
+                const tw = document.getElementById('linkTw');
+                tw.href = `https://twitter.com/${data.twitter.replace('@','')}`;
+                tw.classList.remove('hidden');
+                hasSocial = true;
+            }
+
+            if(hasSocial) {
+                container.classList.remove('hidden');
+            }
         }
 
         function showError() {
@@ -118,24 +162,23 @@
             document.getElementById('errorBox').classList.remove('hidden');
         }
 
-        // Fitur download kontak (.vcf) langsung ke HP klien
         function saveContact() {
             const vcard = `BEGIN:VCARD
 VERSION:3.0
-FN:${contactData.nama}
-TITLE:${contactData.jabatan}
-ORG:${contactData.perusahaan}
-TEL;TYPE=CELL:${contactData.telepon}
-EMAIL:${contactData.email}
-URL:${contactData.website}
-NOTE:${contactData.bio}
+FN:${contactData.nama || ''}
+TITLE:${contactData.jabatan || ''}
+ORG:${contactData.perusahaan || ''}
+TEL;TYPE=CELL:${contactData.telepon || ''}
+EMAIL:${contactData.email || ''}
+URL:${contactData.website || ''}
+NOTE:${contactData.bio || ''}
 END:VCARD`;
 
             const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${contactData.nama.replace(/\s+/g, '_')}_Contact.vcf`;
+            a.download = `${(contactData.nama || 'Contact').replace(/\s+/g, '_')}_Contact.vcf`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
