@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital NFC Business Card</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #07090e; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glow { box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.2); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Loading State -->
+    <div id="loader" class="text-center">
+        <div class="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-sm text-slate-400">Memuat profil NFC...</p>
+    </div>
+
+    <!-- Main Profile Card (Hidden by default until data loaded) -->
+    <div id="profileContainer" class="hidden max-w-sm w-full glass-card glow rounded-3xl p-6 text-center relative overflow-hidden transition-all duration-500">
+        <!-- Background Ambient Glow -->
+        <div id="cardBgGlow" class="absolute -top-20 -left-20 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Avatar / Initials -->
+        <div class="relative w-24 h-24 mx-auto mb-4 rounded-2xl bg-gradient-to-tr from-slate-800 to-slate-700 border border-slate-600 flex items-center justify-center shadow-xl">
+            <span id="initials" class="text-3xl font-extrabold text-emerald-400">MR</span>
+            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-slate-900 flex items-center justify-center text-[10px]">⚡</div>
+        </div>
+
+        <!-- Identity -->
+        <h1 id="pNama" class="text-xl font-bold tracking-tight">Memuat Nama...</h1>
+        <p id="pJabatan" class="text-sm text-emerald-400 font-medium mt-0.5">Jabatan</p>
+        <p id="pPerusahaan" class="text-xs text-slate-400 uppercase tracking-widest mt-1">Perusahaan</p>
+
+        <!-- Bio Quote -->
+        <p id="pBio" class="text-xs text-slate-300/90 mt-4 px-2 italic bg-slate-900/50 py-2.5 rounded-xl border border-slate-800">"..."</p>
+
+        <!-- Action Buttons (Interactive) -->
+        <div class="mt-6 space-y-2.5">
+            <a id="btnWhatsapp" href="#" target="_blank" class="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20">
+                💬 Hubungi WhatsApp
+            </a>
+            <a id="btnEmail" href="#" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold py-3 rounded-xl border border-slate-700 transition-all">
+                ✉️ Kirim Email
+            </a>
+            <a id="btnWebsite" href="#" target="_blank" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold py-3 rounded-xl border border-slate-700 transition-all">
+                🌐 Kunjungi Website
+            </a>
+        </div>
+
+        <!-- Save Contact (vCard Generator) -->
+        <button onclick="saveContact()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/20">
+            📇 Simpan Kontak ke HP (vCard)
+        </button>
+
+        <p class="text-[10px] text-slate-500 mt-6 tracking-wider">POWERED BY SMART NFC TECHNOLOGY</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorBox" class="hidden text-center glass-card p-6 rounded-3xl max-w-sm w-full">
+        <p class="text-xl mb-2">⚠️</p>
+        <h2 class="text-base font-bold text-red-400">Kartu Tidak Ditemukan</h2>
+        <p class="text-xs text-slate-400 mt-1">Pastikan link NFC yang Anda tap sudah benar atau terdaftar di database.</p>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtPVF6-E9qbs29iCMko_kHrgiH03FWUrAEsQUaW0q3rPwLGG8YqPa016WoIvyKtJulRw/exec"; // Ganti dengan Web App URL Anda
+        let contactData = {};
+
+        async function fetchCardData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cardId = urlParams.get('id');
+
+            if (!cardId) {
+                showError();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${WEB_APP_URL}?id=${cardId}`);
+                const res = await response.json();
+
+                if (res.status === "success") {
+                    contactData = res.data;
+                    renderProfile(contactData);
+                } else {
+                    showError();
+                }
+            } catch (err) {
+                showError();
+            }
+        }
+
+        function renderProfile(data) {
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('profileContainer').classList.remove('hidden');
+
+            document.getElementById('pNama').textContent = data.nama;
+            document.getElementById('pJabatan').textContent = data.jabatan;
+            document.getElementById('pPerusahaan').textContent = data.perusahaan;
+            document.getElementById('pBio').textContent = `"${data.bio || 'Digital Business Card'}"`;
+
+            // Inisial avatar
+            const initials = data.nama.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            document.getElementById('initials').textContent = initials;
+
+            // Tombol Link Aksi
+            document.getElementById('btnWhatsapp').href = `https://wa.me/${data.telepon}?text=Halo%20${encodeURIComponent(data.nama)},%20saya%20melihat%20kartu%20NFC%20Anda.`;
+            document.getElementById('btnEmail').href = `mailto:${data.email}`;
+            document.getElementById('btnWebsite').href = data.website.startsWith('http') ? data.website : `https://${data.website}`;
+        }
+
+        function showError() {
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('errorBox').classList.remove('hidden');
+        }
+
+        // Fitur download kontak (.vcf) langsung ke HP klien
+        function saveContact() {
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${contactData.nama}
+TITLE:${contactData.jabatan}
+ORG:${contactData.perusahaan}
+TEL;TYPE=CELL:${contactData.telepon}
+EMAIL:${contactData.email}
+URL:${contactData.website}
+NOTE:${contactData.bio}
+END:VCARD`;
+
+            const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${contactData.nama.replace(/\s+/g, '_')}_Contact.vcf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        fetchCardData();
+    </script>
+</body>
+</html>

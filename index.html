@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart NFC Card Generator - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #090d16; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-xl w-full glass p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl"></div>
+        
+        <div class="text-center mb-8">
+            <span class="px-3 py-1 text-xs font-semibold bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20">NFC Smart Card System</span>
+            <h1 class="text-2xl font-bold mt-3 tracking-tight">Buat Kartu Nama NFC</h1>
+            <p class="text-sm text-slate-400 mt-1">Data tersimpan di Google Sheet & siap di-program ke chip NFC.</p>
+        </div>
+
+        <form id="nfcForm" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Nama Lengkap</label>
+                    <input type="text" id="nama" required class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Muhammad Rizqi">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Jabatan / Title</label>
+                    <input type="text" id="jabatan" required class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Sales Marketing">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Perusahaan / Brand</label>
+                    <input type="text" id="perusahaan" required class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Mitra Rating.id">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">No. WhatsApp / Telepon</label>
+                    <input type="text" id="telepon" required class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="628123456789">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Email</label>
+                    <input type="email" id="email" required class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="email@domain.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Website Portofolio</label>
+                    <input type="text" id="website" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="https://mitrarating.com">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Bio / Tagline Singkat</label>
+                <textarea id="bio" rows="2" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors resize-none" placeholder="Solusi digital akrilik & QRIS terintegrasi..."></textarea>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Tema Warna Kartu</label>
+                <select id="warna" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors">
+                    <option value="from-emerald-600 to-teal-900">Emerald Neon (Modern)</option>
+                    <option value="from-blue-600 to-indigo-900">Deep Ocean Blue</option>
+                    <option value="from-purple-600 to-pink-900">Cyber Purple</option>
+                    <option value="from-amber-600 to-yellow-800">Luxury Gold</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submitBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20">
+                Generate & Simpan ke Google Sheet
+            </button>
+        </form>
+
+        <!-- Hasil Link NFC (Hidden Default) -->
+        <div id="resultBox" class="hidden mt-6 p-4 rounded-2xl bg-slate-900/90 border border-emerald-500/30 text-center animate-pulse">
+            <p class="text-xs text-emerald-400 font-semibold mb-1">✨ KARTU NFC BERHASIL DIBUAT!</p>
+            <p class="text-xs text-slate-300 mb-3">Tulis URL di bawah ini ke dalam chip NFC menggunakan aplikasi NFC Tools di HP Anda:</p>
+            <div class="flex items-center gap-2 bg-slate-950 p-2 rounded-xl border border-slate-800">
+                <input type="text" id="nfcUrl" readonly class="w-full bg-transparent text-xs text-emerald-300 px-2 outline-none select-all">
+                <button onclick="copyLink()" class="bg-emerald-500 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-400 transition-all">Salin</button>
+            </div>
+            <a id="previewLink" href="#" target="_blank" class="inline-block mt-3 text-xs text-indigo-400 underline hover:text-indigo-300">Buka Tampilan Profil Tap ↗</a>
+        </div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtPVF6-E9qbs29iCMko_kHrgiH03FWUrAEsQUaW0q3rPwLGG8YqPa016WoIvyKtJulRw/exec"; // Ganti dengan Web App URL Anda
+
+        document.getElementById('nfcForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = "Menyimpan ke Cloud...";
+
+            const payload = {
+                nama: document.getElementById('nama').value,
+                jabatan: document.getElementById('jabatan').value,
+                perusahaan: document.getElementById('perusahaan').value,
+                telepon: document.getElementById('telepon').value,
+                email: document.getElementById('email').value,
+                website: document.getElementById('website').value,
+                bio: document.getElementById('bio').value,
+                warna: document.getElementById('warna').value
+            };
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                const res = await response.json();
+                
+                if(res.status === "success") {
+                    // Buat link dinamis mengarah ke file card.html dengan membawa parameter ID kartu
+                    const currentDomain = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+                    const profileUrl = currentDomain + "card.html?id=" + res.cardId;
+
+                    document.getElementById('nfcUrl').value = profileUrl;
+                    document.getElementById('previewLink.href').href = profileUrl;
+                    document.getElementById('resultBox').classList.remove('hidden');
+                    document.getElementById('resultBox').classList.remove('animate-pulse');
+                } else {
+                    alert("Gagal menyimpan data.");
+                }
+            } catch (err) {
+                alert("Terjadi kesalahan koneksi.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Generate & Simpan ke Google Sheet";
+            }
+        });
+
+        function copyLink() {
+            const copyText = document.getElementById("nfcUrl");
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            alert("Link NFC berhasil disalin!");
+        }
+    </script>
+</body>
+</html>
