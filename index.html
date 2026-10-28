@@ -1,100 +1,199 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart NFC Card Generator - Dashboard</title>
+    <title>Smart NFC Card Generator - Elite Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
     <style>
-        body { background: #090d16; color: #f8fafc; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        body { 
+            background: #05070b; 
+            color: #f1f5f9; 
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.12) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+        .glass-panel { 
+            background: rgba(13, 17, 23, 0.75); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+        .glass-input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-input:focus {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #05070b; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4 md:p-8">
 
-    <div class="max-w-xl w-full glass p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-        <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl"></div>
+    <div class="max-w-2xl w-full glass-panel p-6 md:p-10 rounded-[2.5rem] relative overflow-hidden">
+        <!-- Background Ambient Glow Effects -->
+        <div class="absolute -top-32 -right-32 w-64 h-64 bg-emerald-500/15 rounded-full blur-[90px] pointer-events-none"></div>
+        <div class="absolute -bottom-32 -left-32 w-64 h-64 bg-indigo-500/15 rounded-full blur-[90px] pointer-events-none"></div>
         
-        <div class="text-center mb-8">
-            <span class="px-3 py-1 text-xs font-semibold bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20">NFC Smart Card System</span>
-            <h1 class="text-2xl font-bold mt-3 tracking-tight">Buat Kartu Nama NFC</h1>
-            <p class="text-sm text-slate-400 mt-1">Data tersimpan di Google Sheet & siap di-program ke chip NFC.</p>
+        <!-- Header Title -->
+        <div class="text-center mb-8 relative z-10">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/1onta text-emerald-400 border border-emerald-500/20 text-xs font-semibold tracking-wide uppercase mb-3">
+                <i class="fa-solid fa-microchip animate-pulse"></i> NFC Smart Card System v2.0
+            </div>
+            <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-white">Buat Kartu Digital & NFC</h1>
+            <p class="text-xs md:text-sm text-slate-400 mt-1.5">Sinkronisasi instan ke Google Sheet & siap diprogram ke chip NFC.</p>
         </div>
 
-        <form id="nfcForm" class="space-y-4">
+        <form id="nfcForm" class="space-y-5 relative z-10">
+            <!-- Informasi Utama -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Nama Lengkap</label>
-                    <input type="text" id="nama" required class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Muhammad Rizqi">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Nama Lengkap</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-xs"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" id="nama" required class="w-full glass-input rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none" placeholder="Muhammad Rizqi">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Jabatan / Title</label>
-                    <input type="text" id="jabatan" required class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Sales Marketing">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Jabatan / Title</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-xs"><i class="fa-solid fa-briefcase"></i></span>
+                        <input type="text" id="jabatan" required class="w-full glass-input rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none" placeholder="Sales Marketing">
+                    </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Perusahaan / Brand</label>
-                    <input type="text" id="perusahaan" required class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Mitra Rating.id">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Perusahaan / Brand</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-xs"><i class="fa-solid fa-building"></i></span>
+                        <input type="text" id="perusahaan" required class="w-full glass-input rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none" placeholder="Mitra Rating.id">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">No. WhatsApp / Telepon</label>
-                    <input type="text" id="telepon" required class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="628123456789">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">No. WhatsApp / Telepon</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-xs"><i class="fa-brands fa-whatsapp text-emerald-400"></i></span>
+                        <input type="text" id="telepon" required class="w-full glass-input rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none" placeholder="628123456789">
+                    </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Email</label>
-                    <input type="email" id="email" required class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="email@domain.com">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Email Bisnis</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-xs"><i class="fa-solid fa-envelope"></i></span>
+                        <input type="email" id="email" required class="w-full glass-input rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none" placeholder="email@domain.com">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Website Portofolio</label>
-                    <input type="text" id="website" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors" placeholder="https://mitrarating.com">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Website Portofolio</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-xs"><i class="fa-solid fa-globe"></i></span>
+                        <input type="text" id="website" class="w-full glass-input rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none" placeholder="https://mitrarating.com">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian Sosial Media Tambahan -->
+            <div class="p-4 rounded-2xl bg-slate-950/40 border border-slate-800/80 space-y-3">
+                <p class="text-xs font-bold text-slate-300 flex items-center gap-2">
+                    <i class="fa-solid fa-share-nodes text-emerald-400"></i> Tautan Media Sosial
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-pink-500 text-xs"><i class="fa-brands fa-instagram"></i></span>
+                        <input type="text" id="instagram" class="w-full glass-input rounded-xl pl-9 pr-3 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-none" placeholder="Username Instagram">
+                    </div>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-400 text-xs"><i class="fa-brands fa-linkedin-in"></i></span>
+                        <input type="text" id="linkedin" class="w-full glass-input rounded-xl pl-9 pr-3 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-none" placeholder="URL Profil LinkedIn">
+                    </div>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-200 text-xs"><i class="fa-brands fa-tiktok"></i></span>
+                        <input type="text" id="tiktok" class="w-full glass-input rounded-xl pl-9 pr-3 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-none" placeholder="Username TikTok">
+                    </div>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-sky-400 text-xs"><i class="fa-brands fa-x-twitter"></i></span>
+                        <input type="text" id="twitter" class="w-full glass-input rounded-xl pl-9 pr-3 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-none" placeholder="Username Twitter / X">
+                    </div>
                 </div>
             </div>
 
             <div>
-                <label class="block text-xs font-medium text-slate-300 mb-1">Bio / Tagline Singkat</label>
-                <textarea id="bio" rows="2" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors resize-none" placeholder="Solusi digital akrilik & QRIS terintegrasi..."></textarea>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Bio / Tagline Singkat</label>
+                <textarea id="bio" rows="2" class="w-full glass-input rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none resize-none" placeholder="Solusi digital akrilik & QRIS terintegrasi..."></textarea>
             </div>
 
             <div>
-                <label class="block text-xs font-medium text-slate-300 mb-1">Tema Warna Kartu</label>
-                <select id="warna" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors">
-                    <option value="from-emerald-600 to-teal-900">Emerald Neon (Modern)</option>
-                    <option value="from-blue-600 to-indigo-900">Deep Ocean Blue</option>
-                    <option value="from-purple-600 to-pink-900">Cyber Purple</option>
-                    <option value="from-amber-600 to-yellow-800">Luxury Gold</option>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tema Warna Tampilan Kartu</label>
+                <select id="warna" class="w-full glass-input rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none">
+                    <option value="from-emerald-600 to-teal-950">Emerald Neon (Modern & Profesional)</option>
+                    <option value="from-blue-600 to-indigo-950">Deep Ocean Blue (Eksklusif)</option>
+                    <option value="from-purple-600 to-pink-950">Cyber Purple (Kreatif & Tech)</option>
+                    <option value="from-amber-600 to-zinc-950">Luxury Gold (Elegan & Premium)</option>
                 </select>
             </div>
 
-            <button type="submit" id="submitBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20">
-                Generate & Simpan ke Google Sheet
+            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Generate & Simpan ke Google Sheet
             </button>
         </form>
 
         <!-- Hasil Link NFC (Hidden Default) -->
-        <div id="resultBox" class="hidden mt-6 p-4 rounded-2xl bg-slate-900/90 border border-emerald-500/30 text-center animate-pulse">
-            <p class="text-xs text-emerald-400 font-semibold mb-1">✨ KARTU NFC BERHASIL DIBUAT!</p>
-            <p class="text-xs text-slate-300 mb-3">Tulis URL di bawah ini ke dalam chip NFC menggunakan aplikasi NFC Tools di HP Anda:</p>
-            <div class="flex items-center gap-2 bg-slate-950 p-2 rounded-xl border border-slate-800">
-                <input type="text" id="nfcUrl" readonly class="w-full bg-transparent text-xs text-emerald-300 px-2 outline-none select-all">
-                <button onclick="copyLink()" class="bg-emerald-500 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-400 transition-all">Salin</button>
+        <div id="resultBox" class="hidden mt-6 p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 text-center relative z-10 animate-fade-in shadow-xl">
+            <div class="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-2 text-sm">
+                <i class="fa-solid fa-check"></i>
             </div>
-            <a id="previewLink" href="#" target="_blank" class="inline-block mt-3 text-xs text-indigo-400 underline hover:text-indigo-300">Buka Tampilan Profil Tap ↗</a>
+            <p class="text-xs text-emerald-400 font-bold tracking-wide uppercase mb-1">KARTU NFC BERHASIL DIBUAT!</p>
+            <p class="text-xs text-slate-300 mb-3">Tulis URL di bawah ini ke dalam chip NFC menggunakan aplikasi NFC Tools di HP Anda:</p>
+            
+            <div class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800 mb-3">
+                <input type="text" id="nfcUrl" readonly class="w-full bg-transparent text-xs text-emerald-300 px-2 outline-none select-all font-mono">
+                <button onclick="copyLink()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
+                    <i class="fa-regular fa-copy"></i> Salin
+                </button>
+            </div>
+            
+            <a id="previewLink" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
+                Buka Tampilan Profil Tap <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
         </div>
     </div>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtPVF6-E9qbs29iCMko_kHrgiH03FWUrAEsQUaW0q3rPwLGG8YqPa016WoIvyKtJulRw/exec"; // Ganti dengan Web App URL Anda
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtPVF6-E9qbs29iCMko_kHrgiH03FWUrAEsQUaW0q3rPwLGG8YqPa016WoIvyKtJulRw/exec";
 
         document.getElementById('nfcForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
-            btn.textContent = "Menyimpan ke Cloud...";
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Menyimpan ke Cloud...`;
 
             const payload = {
                 nama: document.getElementById('nama').value,
@@ -103,6 +202,10 @@
                 telepon: document.getElementById('telepon').value,
                 email: document.getElementById('email').value,
                 website: document.getElementById('website').value,
+                instagram: document.getElementById('instagram').value,
+                linkedin: document.getElementById('linkedin').value,
+                tiktok: document.getElementById('tiktok').value,
+                twitter: document.getElementById('twitter').value,
                 bio: document.getElementById('bio').value,
                 warna: document.getElementById('warna').value
             };
@@ -116,14 +219,12 @@
                 const res = await response.json();
                 
                 if(res.status === "success") {
-                    // Buat link dinamis mengarah ke file card.html dengan membawa parameter ID kartu
                     const currentDomain = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
                     const profileUrl = currentDomain + "card.html?id=" + res.cardId;
 
                     document.getElementById('nfcUrl').value = profileUrl;
-                    document.getElementById('previewLink.href').href = profileUrl;
+                    document.getElementById('previewLink').href = profileUrl;
                     document.getElementById('resultBox').classList.remove('hidden');
-                    document.getElementById('resultBox').classList.remove('animate-pulse');
                 } else {
                     alert("Gagal menyimpan data.");
                 }
@@ -131,7 +232,7 @@
                 alert("Terjadi kesalahan koneksi.");
             } finally {
                 btn.disabled = false;
-                btn.textContent = "Generate & Simpan ke Google Sheet";
+                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Generate & Simpan ke Google Sheet`;
             }
         });
 
